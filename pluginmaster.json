@@ -54,5 +54,31 @@
     "IsHide": false,
     "IsTestingExclusive": false,
     "LastUpdate": 1792506758
+  },
+  {
+    "Author": "TheLegendaryZiz",
+    "Name": "AutoFate",
+    "InternalName": "AutoFate",
+    "AssemblyVersion": "1.0.0.0",
+    "Description": "Finds level-appropriate FATEs, travels using unlocked aetherytes and navigates with ZizNav/vnavmesh. Selects combat targets for a configured combat plugin. Optional leveling-plan features integrate job quests, duties and equipment management. Requires Windows x64, .NET 10 and Dalamud/ZizLoader API 15. Review inventory cleanup settings before using shopping automation: cleanup can discard items. Open with /autofate; use /autofate start, stop or status.",
+    "ApplicableVersion": "any",
+    "Punchline": "Find suitable FATEs, travel to them and earn EXP.",
+    "RepoUrl": "https://github.com/KingPille/ZizPlugins",
+    "IconUrl": "https://raw.githubusercontent.com/KingPille/ZizPlugins/main/icons/AutoFate.png",
+    "Tags": [
+      "fate",
+      "exp",
+      "autolevel",
+      "navmesh"
+    ],
+    "DalamudApiLevel": 15,
+    "LoadPriority": 0,
+    "AcceptsFeedback": false,
+    "DownloadLinkInstall": "https://github.com/KingPille/ZizPlugins/releases/download/AutoFate-v1.0.0.0/AutoFate-1.0.0.zip",
+    "DownloadLinkUpdate": "https://github.com/KingPille/ZizPlugins/releases/download/AutoFate-v1.0.0.0/AutoFate-1.0.0.zip",
+    "DownloadLinkTesting": "https://github.com/KingPille/ZizPlugins/releases/download/AutoFate-v1.0.0.0/AutoFate-1.0.0.zip",
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "LastUpdate": 1792514925
   }
 ]

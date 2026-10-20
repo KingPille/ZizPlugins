@@ -21,10 +21,11 @@ Keep your existing configuration and personal data.
 
 ## Available plugins
 
-| Plugin | What it does | Source code |
+| Plugin | What it does | Links |
 | --- | --- | --- |
 | **ZizDailyRoutines** | Configurable helpers for everyday FFXIV tasks. | [Browse](https://github.com/KingPille/ZizDailyRoutines) · [Download ZIP](https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0-Source.zip) |
-| **ZizBestiarium** | Beastmaster bestiary, collection tracking and a capture autopilot preview. Open with `/zizbest`. | Included with its separate development package. |
+| **ZizBestiarium** | Beastmaster bestiary, collection tracking and a capture autopilot preview. Open with `/zizbest`. | [Plugin ZIP](https://github.com/KingPille/ZizPlugins/releases/download/ZizBestiarium-v1.1.0.0/ZizBestiarium-1.1.0.zip) |
+| **AutoFate** | Find level-appropriate FATEs and travel with navigation/combat-plugin integrations. | [Plugin ZIP](https://github.com/KingPille/ZizPlugins/releases/download/AutoFate-v1.0.0.0/AutoFate-1.0.0.zip) |
 
 ### ZizDailyRoutines
 
@@ -43,12 +44,26 @@ appropriate equipment and the necessary unlocks or premade party. These dependen
 Open `/zizbest` and use the first tab to start, pause or stop the autopilot.
 Special boss mechanics may require intervention. The reported capture issue still needs runtime investigation.
 
+### AutoFate
+
+Install **AutoFate** using the same repository URL, then open `/autofate`.
+Use `/autofate start`, `/autofate stop` and `/autofate status` to control the session.
+
+Requires ZizNav/vnavmesh and a configured combat rotation plugin. Optional leveling-plan features integrate
+ZizDuty, ZizQuest/Questionable and ZizStream/Lifestream; some extended features require the Ziz variants.
+Dependencies are installed separately. The existing in-game interface remains primarily German.
+
+Review inventory cleanup and shopping settings before starting: cleanup can permanently discard items,
+and shopping/teleport options may spend gil. Distribution does not change these existing behaviors.
+
+**[Download plugin ZIP](https://github.com/KingPille/ZizPlugins/releases/download/AutoFate-v1.0.0.0/AutoFate-1.0.0.zip)**
+
 ## Compatibility and status
 
 These packages target **Windows x64, .NET 10 and Dalamud/ZizLoader API 15**.
 A different loader API level cannot load this build; adding the repository URL does not change that requirement.
 
-Both packages are preview releases. Archive integrity and manifest consistency have been checked;
+The packages are preview releases. Archive integrity and manifest consistency have been checked;
 their runtime behavior in FFXIV has not been validated. See each release for its requirements.
 Report issues with the plugin version, loader API level and exact status or error message.
 Never include passwords or access tokens.
