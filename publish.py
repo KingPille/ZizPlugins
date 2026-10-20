@@ -30,34 +30,45 @@ def digest(data):
 def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-def prepare(plugin):
-    manifest = json.loads((plugin / "ZizBestiarium.json").read_text(encoding="utf-8-sig"))
+def prepare(plugin, package=None, manifest_file=None, source_zip=None, source_repo=None):
+    manifest = json.loads((manifest_file or plugin / "ZizBestiarium.json").read_text(encoding="utf-8-sig"))
     name, version = manifest["InternalName"], manifest["AssemblyVersion"]
     if name not in CONFIG["plugins"] or not re.fullmatch(r"\d+\.\d+\.\d+\.\d+", version):
         raise ValueError("Unexpected plugin name or assembly version")
     tag = f"{name}-v{version}"
     short = version[:-2] if version.endswith(".0") else version
-    package = plugin / "dist" / f"{name}-{short}.zip"
+    custom_package = package is not None
+    package = package or plugin / "dist" / f"{name}-{short}.zip"
     payload = package.read_bytes()
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-        required = {f"{name}.dll", f"{name}.json", "images/icon.png", "Data/fundpunkte.json"}
+        required = {f"{name}.dll", f"{name}.json", "images/icon.png"}
+        if name == "ZizBestiarium":
+            required.add("Data/fundpunkte.json")
         if not required.issubset(archive.namelist()):
             raise ValueError("Package is missing plugin files")
         inside = json.loads(archive.read(f"{name}.json"))
         if inside["AssemblyVersion"] != version or inside["DalamudApiLevel"] != manifest["DalamudApiLevel"]:
             raise ValueError("Package and source manifest disagree")
-        if archive.read(f"{name}.dll") != (plugin / "bin/Release" / f"{name}.dll").read_bytes():
+        if not custom_package and archive.read(f"{name}.dll") != (plugin / "bin/Release" / f"{name}.dll").read_bytes():
             raise ValueError("Package DLL is outdated; run Package.ps1 first")
         icon = archive.read("images/icon.png")
     assets = ROOT / "release-assets"
     assets.mkdir(exist_ok=True)
     (assets / package.name).write_bytes(payload)
+    release_assets = {package.name: payload}
+    if source_zip is not None:
+        source_payload = source_zip.read_bytes()
+        with zipfile.ZipFile(io.BytesIO(source_payload)) as source_archive:
+            if source_archive.testzip() is not None:
+                raise ValueError("Source ZIP is corrupt")
+        (assets / source_zip.name).write_bytes(source_payload)
+        release_assets[source_zip.name] = source_payload
     sums_name = f"{name}-{version}-SHA256SUMS.txt"
-    sums = f"{digest(payload)}  {package.name}\n".encode("utf-8")
+    sums = "".join(f"{digest(content)}  {asset}\n" for asset, content in release_assets.items()).encode("utf-8")
     (assets / sums_name).write_bytes(sums)
     entry = dict(manifest)
     link = f"{REPO_URL}/releases/download/{tag}/{package.name}"
-    entry.update(RepoUrl=REPO_URL, DownloadLinkInstall=link, DownloadLinkUpdate=link,
+    entry.update(RepoUrl=source_repo or REPO_URL, DownloadLinkInstall=link, DownloadLinkUpdate=link,
                  DownloadLinkTesting=link, IsHide=False, IsTestingExclusive=False,
                  IconUrl=f"{RAW_URL}/icons/{name}.png", LastUpdate=int(time.time()))
     feed = ROOT / "pluginmaster.json"
@@ -66,7 +77,8 @@ def prepare(plugin):
     icons = ROOT / "icons"
     icons.mkdir(exist_ok=True)
     (icons / f"{name}.png").write_bytes(icon)
-    return manifest, tag, {package.name: payload, sums_name: sums}
+    release_assets[sums_name] = sums
+    return manifest, tag, release_assets
 
 class GitHub:
     def __init__(self):
@@ -124,11 +136,11 @@ def commit_feed(api, prefix):
         tree.append({"path": path, "mode": "100644", "type": "blob", "sha": blob["sha"]})
     created = api.request("POST", f"{prefix}/git/trees", {"base_tree": commit["tree"]["sha"], "tree": tree})
     result = api.request("POST", f"{prefix}/git/commits", {
-        "message": "Publish ZizBestiarium package feed", "tree": created["sha"], "parents": [parent]})
+        "message": "Update plugin packages, source downloads and English documentation", "tree": created["sha"], "parents": [parent]})
     api.request("PATCH", f"{prefix}/git/refs/heads/{BRANCH}", {"sha": result["sha"], "force": False})
     return result["sha"]
 
-def publish(manifest, tag, assets):
+def publish(manifest, tag, assets, release_notes=None):
     api = GitHub()
     if api.request("GET", "/user")["login"].lower() != OWNER.lower():
         raise RuntimeError("GitHub login differs from distribution.json; no changes made")
@@ -136,7 +148,7 @@ def publish(manifest, tag, assets):
     repo = get_or_none(api, prefix)
     if repo is None:
         repo = api.request("POST", "/user/repos", {"name": REPO, "private": False, "auto_init": True,
-                           "description": "Plugin-Quelle und Updates für die Ziz-Plugins (Dalamud/ZizLoader)."})
+                           "description": "Installable Dalamud/ZizLoader plugin packages and updates."})
         print("CREATED", repo["html_url"])
         initial = api.request("GET", f"{prefix}/contents/README.md")
         api.request("PUT", f"{prefix}/contents/README.md", {
@@ -149,6 +161,7 @@ def publish(manifest, tag, assets):
             raise RuntimeError("Existing repository has no Ziz distribution marker; no existing files changed")
         if repo["private"]:
             raise RuntimeError("Feed requires anonymous access; refusing to change repository visibility")
+    api.request("PATCH", prefix, {"description": "Installable Dalamud/ZizLoader plugin packages and updates."})
     if repo["default_branch"] != BRANCH:
         old = api.request("GET", f"{prefix}/git/ref/heads/{repo['default_branch']}")
         if get_or_none(api, f"{prefix}/git/ref/heads/{BRANCH}") is None:
@@ -159,12 +172,11 @@ def publish(manifest, tag, assets):
         release = next((r for r in api.request("GET", f"{prefix}/releases?per_page=100") if r["tag_name"] == tag), None)
     if release is None:
         release = api.request("POST", f"{prefix}/releases", {
-            "tag_name": tag, "target_commitish": BRANCH, "name": f"ZizBestiarium {manifest['AssemblyVersion']} - Testversion",
+            "tag_name": tag, "target_commitish": BRANCH, "name": f"{manifest['Name']} {manifest['AssemblyVersion']} - Preview",
             "draft": True, "prerelease": True,
-            "body": "Installation über die Paketquelle im README. DLL, Manifest, Icon und Fundpunkte enthalten. "
-                    "Dalamud API 15 / .NET 10 / Windows x64. Autopilot im laufenden Spiel noch nicht validiert. "
-                    "ZizNav/vnavmesh erforderlich; Instanzen benötigen ZizDuty und passende Freischaltungen/Gruppe. "
-                    "22 lokale Prüfungen bestanden; Release-Build ohne Fehler und Warnungen."})
+            "body": release_notes or "Install using the plugin repository URL in the README. "
+                    "Includes the plugin DLL, manifest and companion assets. Windows x64 / .NET 10 / Dalamud API 15. "
+                    "This is a preview build; runtime behavior in FFXIV has not been validated."})
     for name, content in assets.items():
         existing = next((a for a in release["assets"] if a["name"] == name), None)
         if existing:
@@ -235,9 +247,17 @@ def verify_local():
             if forbidden:
                 raise ValueError("Unexpected personal files or invalid paths in ZIP")
         checksum = ROOT / "release-assets" / f"{entry['InternalName']}-{entry['AssemblyVersion']}-SHA256SUMS.txt"
-        expected = f"{digest(archive_path.read_bytes())}  {archive_path.name}\n"
-        if checksum.read_text(encoding="utf-8") != expected:
-            raise ValueError("Package checksum file differs")
+        checked = set()
+        for line in checksum.read_text(encoding="utf-8").splitlines():
+            expected_hash, filename = line.split("  ", 1)
+            if Path(filename).name != filename:
+                raise ValueError("Invalid checksum filename")
+            asset = ROOT / "release-assets" / filename
+            if digest(asset.read_bytes()) != expected_hash:
+                raise ValueError("Release asset checksum differs")
+            checked.add(filename)
+        if archive_path.name not in checked:
+            raise ValueError("Package is missing from checksum file")
         print("VERIFIED local ZIP, CRC, manifest, feed links and checksum", archive_path.name)
 
 def main():
@@ -247,6 +267,11 @@ def main():
     parser.add_argument("--publish", action="store_true")
     parser.add_argument("--verify", action="store_true")
     parser.add_argument("--verify-local", action="store_true")
+    parser.add_argument("--package", type=Path)
+    parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--source-zip", type=Path)
+    parser.add_argument("--source-repo")
+    parser.add_argument("--release-notes", type=Path)
     args = parser.parse_args()
     if args.verify_local:
         verify_local()
@@ -259,11 +284,12 @@ def main():
     if args.verify:
         verify_feed()
         return
-    manifest, tag, assets = prepare(args.plugin_dir.resolve())
+    manifest, tag, assets = prepare(args.plugin_dir.resolve(), args.package, args.manifest, args.source_zip, args.source_repo)
     verify_local()
     print("PREPARED", tag, "assets", ", ".join(assets))
     if args.publish:
-        publish(manifest, tag, assets)
+        notes = args.release_notes.read_text(encoding="utf-8") if args.release_notes else None
+        publish(manifest, tag, assets, notes)
         verify_feed()
 
 if __name__ == "__main__":

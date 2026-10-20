@@ -5,8 +5,8 @@
     "InternalName": "ZizBestiarium",
     "AssemblyVersion": "1.1.0.0",
     "DalamudApiLevel": 15,
-    "Punchline": "Beastmaster-Autopilot: fehlende Bestien aufsuchen und fangen.",
-    "Description": "Plant alle fehlenden Bestien ein, reist mit freigeschalteten Ätheryten, läuft Fundstellen mit ZizNav/vnavmesh ab und verwendet Fangen mit eigener Einzelziel-Rotation. Instanzrouten über ZizDuty. Liest vorhandene Pakte aus dem Spiel; Fortschritt getrennt pro Charakter. Autopilot im Spiel noch nicht validiert. Öffnen: /zizbest.",
+    "Punchline": "Beastmaster autopilot: find and capture missing beasts.",
+    "Description": "Tracks your Beastmaster collection, reads existing pacts from the game and plans missing creatures. Travels using unlocked aetherytes and ZizNav/vnavmesh, then uses Capture with its own single-target rotation. Duty routes use ZizDuty. Requires Windows x64, .NET 10 and Dalamud API 15. Preview: runtime behavior has not been validated. Open with /zizbest.",
     "ApplicableVersion": "any",
     "Tags": [
       "beastmaster",
@@ -26,5 +26,33 @@
     "IsTestingExclusive": false,
     "IconUrl": "https://raw.githubusercontent.com/KingPille/ZizPlugins/main/icons/ZizBestiarium.png",
     "LastUpdate": 1792504737
+  },
+  {
+    "Author": "ziz",
+    "Name": "ZizDailyRoutines",
+    "InternalName": "DailyRoutines",
+    "AssemblyVersion": "1.0.0.0",
+    "Description": "A customized Daily Routines package for zizi45official, with configurable task and interface helpers. Requires Dalamud/ZizLoader API 15 on Windows x64. This package has not been runtime-tested in FFXIV.",
+    "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/KingPille/ZizDailyRoutines",
+    "Tags": [
+      "Daily",
+      "Auto",
+      "Offline"
+    ],
+    "DalamudApiLevel": 15,
+    "LoadRequiredState": 0,
+    "LoadSync": false,
+    "CanUnloadAsync": false,
+    "LoadPriority": 10000,
+    "IconUrl": "https://raw.githubusercontent.com/KingPille/ZizPlugins/main/icons/DailyRoutines.png",
+    "Punchline": "Configurable helpers for everyday FFXIV tasks.",
+    "AcceptsFeedback": false,
+    "DownloadLinkInstall": "https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0.zip",
+    "DownloadLinkUpdate": "https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0.zip",
+    "DownloadLinkTesting": "https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0.zip",
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "LastUpdate": 1792506758
   }
 ]

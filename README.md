@@ -1,60 +1,71 @@
 <!-- ziz-plugins-distribution -->
 # ZizPlugins
 
-Plugin-Quelle für die Ziz-Plugins von TheLegendaryZiz / zizi45official.
-Hier liegen die Installationsliste und die fertigen Pakete unter Releases.
+Installable plugin packages and updates for Dalamud/ZizLoader.
 
-## Installation
+## Install in three steps
 
-Diese URL im Loader unter **Einstellungen → Experimentell → Eigene Plugin-Quellen** hinzufügen und aktivieren:
+1. Open **Settings → Experimental → Custom Plugin Repositories** in your loader.
+2. Add and enable this URL:
 
-```text
-https://raw.githubusercontent.com/KingPille/ZizPlugins/main/pluginmaster.json
-```
+   ```text
+   https://raw.githubusercontent.com/KingPille/ZizPlugins/main/pluginmaster.json
+   ```
 
-Danach den Plugin-Installer neu laden, **ZizBestiarium** suchen und installieren.
-Weitere Versionen erscheinen über die normale Aktualisierung im Plugin-Installer.
-In das Quellenfeld gehört die obige JSON-Adresse.
+3. Reload the plugin installer, search for the plugin you want and select **Install**.
 
-Falls zuvor eine DLL manuell als Dev-Plugin geladen wurde: diesen Dev-Eintrag deaktivieren,
-bevor dasselbe Plugin über den Installer geladen wird. Die Sammlung liegt separat im
-Konfigurationsordner; die eigenen Fortschrittsdateien nicht löschen.
+**That's it.** Future updates appear in the same plugin installer. No Git commands or manual DLL copying are needed.
 
-## ZizBestiarium
+If you previously loaded a manual development copy, disable that entry before installing another copy.
+Keep your existing configuration and personal data.
 
-Beastmaster-Bestiarium und Autopilot. Öffnen mit `/zizbest`.
-Unter **Autopilot → Alle abklappern & fangen** starten.
+## Available plugins
 
-- Liest vorhandene Pakte aus dem Spiel und plant fehlende Bestien ein.
-- Reist zu freigeschalteten Fundgebieten, sucht Fundpunkte und verwendet Fangen mit eigener Rotation.
-- Plant Instanz-Bestien über ZizDuty ein.
-- Fortschritt, Favoriten und Notizen getrennt pro Charakter; Pause und Stopp im Fenster.
+| Plugin | What it does | Source code |
+| --- | --- | --- |
+| **ZizDailyRoutines** | Configurable helpers for everyday FFXIV tasks. | [Browse](https://github.com/KingPille/ZizDailyRoutines) · [Download ZIP](https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0-Source.zip) |
+| **ZizBestiarium** | Beastmaster bestiary, collection tracking and a capture autopilot preview. Open with `/zizbest`. | Included with its separate development package. |
 
-**Kompatibilität:** Windows x64, .NET 10 und Dalamud/ZizLoader **API 15**.
-Ein Loader mit einer anderen API-Version kann dieses Paket nicht laden.
-ZizNav oder vnavmesh muss zusätzlich installiert und bereit sein. Für Instanzen werden ZizDuty,
-Beastmaster Stufe 50, passende Ausrüstung und die notwendigen Freischaltungen bzw. Gruppen benötigt.
-Diese Abhängigkeiten werden durch diese Quelle nicht automatisch mitinstalliert.
+### ZizDailyRoutines
 
-**Testversion:** Der Autopilot wurde noch nicht im laufenden Spiel validiert.
-Besondere Boss-Mechaniken können Eingreifen erfordern. Die Verteilung über GitHub bestätigt
-keinen vollständigen automatischen Fangdurchlauf. Fehler bitte mit Plugin-Version und dem
-genauen Status im Autopilot-Fenster melden. Keine Passwörter oder Zugangsdaten mitsenden.
+**[Download plugin ZIP](https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0.zip)** · **[Download source code](https://github.com/KingPille/ZizPlugins/releases/download/DailyRoutines-v1.0.0.0/ZizDailyRoutines-1.0.0-Source.zip)** · **[Browse source](https://github.com/KingPille/ZizDailyRoutines)**
 
-## Neue Version veröffentlichen
+Use the repository URL above for the easiest installation. Manual users should extract the complete plugin ZIP
+and keep its companion DLLs, assets and runtime folders together. The source download contains eight C# projects;
+a complete clean build of that source snapshot has not been validated.
 
-Die Pakete werden lokal mit den passenden Dalamud-Bibliotheken gebaut. Dieses Repository
-enthält Paketindex, Icon und Veröffentlichungsskript. Die Releases enthalten DLL und
-die benötigten eigenen Daten, keine persönlichen Fortschrittsdateien.
+### ZizBestiarium
 
-1. Projekt- und Manifestversion gemeinsam erhöhen, bauen und prüfen.
-2. Im Plugin-Projekt `Package.ps1` ausführen.
-3. Hier `python publish.py --plugin-dir PFAD_ZUM_PLUGIN` ausführen und das Ergebnis prüfen.
-4. Mit `python publish.py --plugin-dir PFAD_ZUM_PLUGIN --publish` Paket und Quellenliste veröffentlichen.
+Tracks captured beasts separately for each character and plans missing creatures, including duty encounters.
+The autopilot requires **ZizNav or vnavmesh**. Duties additionally require **ZizDuty**, Beastmaster level 50,
+appropriate equipment and the necessary unlocks or premade party. These dependencies are installed separately.
 
-Das Skript verwendet die bestehende GitHub-Anmeldung aus Git Credential Manager.
-Zugangsdaten werden weder in Dateien gespeichert noch ausgegeben. Bestehende Release-Dateien
-mit abweichendem Inhalt werden nicht überschrieben; dafür ist eine neue Versionsnummer nötig.
-Vor dem Aktualisieren des Index werden öffentliche Paketdownloads auf ihren SHA-256-Hash geprüft.
+Open `/zizbest` and use the first tab to start, pause or stop the autopilot.
+Special boss mechanics may require intervention. The reported capture issue still needs runtime investigation.
 
-Formatbeschreibung: [Dalamud: Custom Repositories](https://dalamud.dev/plugin-publishing/custom-repositories/).
+## Compatibility and status
+
+These packages target **Windows x64, .NET 10 and Dalamud/ZizLoader API 15**.
+A different loader API level cannot load this build; adding the repository URL does not change that requirement.
+
+Both packages are preview releases. Archive integrity and manifest consistency have been checked;
+their runtime behavior in FFXIV has not been validated. See each release for its requirements.
+Report issues with the plugin version, loader API level and exact status or error message.
+Never include passwords or access tokens.
+
+## Publishing updates
+
+This repository hosts the package index, icons and versioned release downloads. Personal configuration and progress
+files are not included. ZizDailyRoutines source is hosted in its [source repository](https://github.com/KingPille/ZizDailyRoutines).
+
+For ZizBestiarium, increase the project and manifest versions together, build and check the project,
+run its `Package.ps1`, then use `python publish.py --plugin-dir PATH_TO_PLUGIN --publish`.
+
+For other configured packages, supply `--package`, `--manifest` and optionally `--source-zip`, `--source-repo`
+and `--release-notes`. Omit `--publish` to prepare and inspect the files locally first.
+
+The publishing script uses the existing GitHub login from Git Credential Manager. Credentials are never printed
+or written to repository files. Existing release assets with different contents are not overwritten;
+publish a new version instead. Public package downloads are verified against SHA-256 checksums before the feed is updated.
+
+Repository format: [Dalamud: Custom Repositories](https://dalamud.dev/plugin-publishing/custom-repositories/).
