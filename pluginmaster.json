@@ -1,0 +1,30 @@
+[
+  {
+    "Author": "TheLegendaryZiz",
+    "Name": "ZizBestiarium",
+    "InternalName": "ZizBestiarium",
+    "AssemblyVersion": "1.1.0.0",
+    "DalamudApiLevel": 15,
+    "Punchline": "Beastmaster-Autopilot: fehlende Bestien aufsuchen und fangen.",
+    "Description": "Plant alle fehlenden Bestien ein, reist mit freigeschalteten Ätheryten, läuft Fundstellen mit ZizNav/vnavmesh ab und verwendet Fangen mit eigener Einzelziel-Rotation. Instanzrouten über ZizDuty. Liest vorhandene Pakte aus dem Spiel; Fortschritt getrennt pro Charakter. Autopilot im Spiel noch nicht validiert. Öffnen: /zizbest.",
+    "ApplicableVersion": "any",
+    "Tags": [
+      "beastmaster",
+      "bestiary",
+      "capture",
+      "automation",
+      "ziz"
+    ],
+    "LoadRequiredState": 0,
+    "CanUnloadAsync": true,
+    "AcceptsFeedback": false,
+    "RepoUrl": "https://github.com/KingPille/ZizPlugins",
+    "DownloadLinkInstall": "https://github.com/KingPille/ZizPlugins/releases/download/ZizBestiarium-v1.1.0.0/ZizBestiarium-1.1.0.zip",
+    "DownloadLinkUpdate": "https://github.com/KingPille/ZizPlugins/releases/download/ZizBestiarium-v1.1.0.0/ZizBestiarium-1.1.0.zip",
+    "DownloadLinkTesting": "https://github.com/KingPille/ZizPlugins/releases/download/ZizBestiarium-v1.1.0.0/ZizBestiarium-1.1.0.zip",
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "IconUrl": "https://raw.githubusercontent.com/KingPille/ZizPlugins/main/icons/ZizBestiarium.png",
+    "LastUpdate": 1792504737
+  }
+]
